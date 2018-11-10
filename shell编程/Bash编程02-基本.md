@@ -624,3 +624,91 @@ Ctl-V主要用于文本编辑.
     echo 
     # 所以所bash中变量都是不区分类型的.
     exit
+    
+## 4.4 特殊的变量类型
+- 局部变量
+> 这种变量只有在代码块或者函数中才可见
+- 环境变量
+> 这种变量将影响用户接口和shell的行为
+分配给环境变量的空间是有限的.创建太多的环境变量,或者给一个环境变量分配太多的空间都会引起错误.
+- 位置参数
+> 从命令行传递到脚本的参数:$0 $1 $2 $3 ...
+$0 就是脚本文件自身的名字,$1第一个参数,$9之后就必须用大括号括起来了,比如,${10}
+两个比较特殊的变量$*和$@表示所有的位置参数
+
+例子4-5 位置参数
+
+    #! /bin/bash
+    # 作为用例,调用这个脚本只是需要10个参数
+    MINPARAMS=10
+    
+    echo
+    
+    echo "The name of this script is \"$0\"."
+    # 添加./是表示当前目录
+    echo "The name of this script is \"`basename $0`\""
+    # 去掉路径名,剩下文件名
+    
+    echo
+    if [ -n "$1" ]
+    then
+        echo "parameter #1 is $1"
+    fi
+    
+    if [ -n "$1" ]
+    then
+        echo "parameter #1 is $1"
+    fi
+        if [ -n "$2" ]
+    then
+        echo "parameter #2 is $2"
+    fi
+        if [ -n "$3" ]
+    then
+        echo "parameter #3 is $3"
+    fi
+        if [ -n "$4" ]
+    then
+        echo "parameter #4 is $4"
+    fi
+        if [ -n "$5" ]
+    then
+        echo "parameter #5 is $5"
+    fi
+        if [ -n "$6" ]
+    then
+        echo "parameter #6 is $6"
+    fi
+        if [ -n "$7" ]
+    then
+        echo "parameter #7 is $7"
+    fi
+    if [ -n "$8" ]
+    then
+        echo "parameter #8 is $8"
+    fi
+        if [ -n "$9" ]
+    then
+        echo "parameter #9 is $9"
+    fi
+        if [ -n "${10}" ]
+    then
+        echo "parameter #10 is ${10}"
+    fi
+    
+    echo "--------------------------------------"
+    echo "All the command-line parameters are: "$*""
+    
+    if [ $# -lt "$MINPARAMS" ]
+    then
+        echo
+        echo "This script needs at least $MINPARAMS command-line arguments!"
+     fi
+     
+     echo 
+     
+     exit 0
+     
+> {}标记法提供了一种提取从命令行传递到脚本的最后一个位置的参数的简单办法.但是这种方法还需要使用间接引用.
+
+例子4-6 wh, whois节点名字查询
