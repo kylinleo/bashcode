@@ -583,3 +583,44 @@ Ctl-V主要用于文本编辑.
 > 使用$(..)机制来进行变量赋值.
 
 ##　4.3 Bash变量是不区分类型的.
+> 本质上,Bash变量都是字符串.但是依赖于具体的上下文,Bash也允许比较操作和整数操作.其中的关键因素就是,变量中的值是否只含有数字
+例子4-4 整形还是字符串
+      
+    #! /bin/bash
+    # init-or-string.sh : 整型还是字符串
+    
+    a=2334              # 整型
+    let "a += 1"        
+    echo "a = $a"       # a=2335 还是整型
+    echo
+    
+    b=${a/23/BB}        # 将"23"替换为"BB" b为字符串
+    echo "b = $b"               
+    declarre = -i b     # 即使使用declare命令也不会改变b的类型
+    echo "b = $b"
+    
+    let "b += 1"    
+    echo "b = $b"
+    echo
+    
+    c=BB34
+    echo "c = $c"
+    d=${c/BB/23}        # 这将使$d变为整型
+    echo "d = $d"
+    let "d += 1"
+    echo "d = $d"
+    echo
+    
+    # null变量
+    e=""
+    echo "e = $e"
+    let "e += 1"
+    echo "e = $e"   # null变量被转换成一个整型变量
+    echo
+    
+    echo "f = $f"
+    let "f += 1"
+    echo "f = $f"   # 未声明的变量转换成一个整型变量
+    echo 
+    # 所以所bash中变量都是不区分类型的.
+    exit
