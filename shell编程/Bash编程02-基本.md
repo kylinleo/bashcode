@@ -711,4 +711,90 @@ $0 就是脚本文件自身的名字,$1第一个参数,$9之后就必须用大�
      
 > {}标记法提供了一种提取从命令行传递到脚本的最后一个位置的参数的简单办法.但是这种方法还需要使用间接引用.
 
-例子4-6 wh, whois节点名字查询
+# 引用
+> 引用的字面以所就是将字符串用双括号括起来.它的的作用就是保护字符串中的特殊字符不被shell或者shell脚本重新解释或者扩展.
+## 5.1  引用变量
+> 在一个双引号中通过直接使用变量名的方法来引用变量,一般情况下都是没问题的.但是$,`和\除外.
+
+> 使用刷引号还能阻止单词分割.如果一个参数被双引号括起来的话,那么这个参数将认为是一个单元,即使这个参数包含空白,那里面的单词也不会被分开.
+在echo语句中,只有在单词分割或者需要保留空白的时候,才需要把参数用双引号括起来.
+
+例子 5-1 ehco出一些诡异的变量
+
+    #! /bin/bash
+    # weirdvars.sh echo 出一些诡异变量
+    var="'([\\{}\$\""
+    echo $var
+    echo "$var"
+    echo
+    IFS='\'
+    echo $var       # \ 字符被空白字符替换了
+    echo "$var"
+    
+    exit 0
+    
+> 单引号(' ')操作与双引号基本一样,但是不允许引用变量.
+
+## 5.2  转义
+> 转义是一种引用单个字符的方法. 一个前面放上转义符(\)的字符就是告诉shell这个字符按照字面的意思进行解释,即这个字符失去了它的特殊含义.  
+- 特定的转义符的特殊含义
+> echo 和 sed 命令中使用
+
+- \n    表示新的一行
+- \r    表示回车
+- \t    表示水平制表符
+- \v    表示垂直制表符
+- \b    表示后退符
+- \a    表示alert
+- \0xx  转换为八进制的ASCII码,等价于0xx
+
+例子 5-2 转义符
+
+    #! /bin/bash
+    # excaped.sh: 转义符
+    echo; echo
+    echo "\v\v\v\v" # 逐字打印\v\v\v\v
+    # 使用-e选项的'echo'命令来打印转义符
+    echo "================================"
+    echo "VERTICAL TABS"
+    echo -e "\v\v\v\v"
+    echo "================================"
+    echo "QUOTATION MARK"
+    echo -e "\042"
+    echo "================================"
+    
+    # 如果使用$'\X'结构,那-e选项就不必要了
+    echo; echo "NEWLINE AND BEEP"
+    echo $'\n'
+    echo $'\a'
+    echo "================================"
+    echo "QUOTATION MARKS "
+    echo $'\t \042 \t'
+    echo $'\t \x22 \t'
+    echo "================================"
+    echo
+    
+    # 分配ASCII字符到变量中
+    quote=$'\042'
+    echo "$quote This is a quoted string, $quote and this lies outside the quotes"
+    echo
+    
+    # 变量中连续的ASCII字符
+    triple_underline=$'\137\137\137'
+    echo "$triple_underline" UNDERLINE $triple_underline"
+    echo
+    
+    ABC=$'\101\102\103\010'
+    echo $ABC
+    echo;echo
+    escape=$'\033'
+    echo "\"escape\" echoes as $escape"
+    
+    echo; echo
+    exit 0
+ 
+- \\"    表示引号字面的意思
+- \\$    表示$本身字面的含义
+- \\\    表示反斜线字面的意思
+
+# 6. 退出和退出状态码
