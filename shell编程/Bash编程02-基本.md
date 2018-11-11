@@ -31,7 +31,7 @@
 
 - ,
 逗号操作符。逗号操作符链接了一系列的算数操作，虽然里面所有的内容都被运行了，但只有最后一项被返回。
-      let "t2 = ((a = 9, 15 / 3))" # Set "a = 9" and "t2 = 15 / 3"    
+  ​    let "t2 = ((a = 9, 15 / 3))" # Set "a = 9" and "t2 = 15 / 3"    
 - \
 转义符[反斜线，即\\],一种对单字符的引用机制。\\X将会"转义"字符X. 这等价于"X", 也等价于'X'. \\通常用来转义"和', 这样双引号和但引号就不会被解释成特殊含义了.
 
@@ -45,11 +45,11 @@
 空命令[冒号，即:]。等价于“NOP”（no op，一个什么都不干的命令）。也可以被认为与shell内建命令true作用相同，”:”命令是个bash的内建命令，它的退出码时true。
 死循环 while :
 if/then中的占位符：
-      if condition
-      then : # 什么都不做，引出分支。
-      else
-        todo
-      fi
+  ​    if condition
+  ​    then : # 什么都不做，引出分支。
+  ​    else
+  ​      todo
+  ​    fi
 在一个二元命令中提供一个占位符。  
 在here document中提供一个命令所需的占位符。
 使用参数替换来评估字符串变量。  
@@ -126,39 +126,39 @@ if/then中的占位符：
 
     #! /bin/bash
     # 从/etc/fstab中读行
-
+    
     File=/etc/fstab
     {
       read line1
       read line2
     } < $File
-
+    
     echo "First line in $File is: "
     echo "$line1"
     echo
     echo "Second line in $File is: "
     echo "$line2"
-
+    
     exit 0
     # 现在，这么分析每行的分割域
     # 小提示，使用awk
 
 例子3-2 将一个代码块的结果保存到文件
-    #! /bin/bash
-    # rpm-check.sh
-    # 这个脚本的目的是为了描述, 列表, 和确定是否可以安装一个rpm包.
-    # 在一个文件中保存输出.
-    #
-    # 这个脚本使用一个代码块来展示.
-    SUCCESS=0
-    E_NOARGS=65
+​    #! /bin/bash
+​    # rpm-check.sh
+​    # 这个脚本的目的是为了描述, 列表, 和确定是否可以安装一个rpm包.
+​    # 在一个文件中保存输出.
+​    #
+​    # 这个脚本使用一个代码块来展示.
+​    SUCCESS=0
+​    E_NOARGS=65
 
     if [ -z "$1" ]
     then
       echo "Usage: `basename $0` rpm-file"
       exit $E_NOARGS
     fi
-
+    
     {
       echo
       echo "Archive Description: "
@@ -168,7 +168,7 @@ if/then中的占位符：
       rpm -qpl $1  # 查询列表
       echo
       rpm -i --test $1  # 查询rpm包是否可以被安装。
-
+    
       if [ "$?" -eq $SUCCESS ]
       then
         echo "$1 can be installed."
@@ -178,9 +178,9 @@ if/then中的占位符：
       echo
     } > "$1.test" # 把代码块中的所有输出重定向到文件中。
     echo "resultes of rpm test in file $1.test"
-
+    
     # 查看rpm的man页来查看rpm的选项。
-
+    
     exit 0
 
 - {} \;
@@ -236,7 +236,7 @@ scriptname >>filename 把scriptname的输出追加到文件filename中. 如果fi
     tr 'a-z' 'A-Z'
     # 字符范围必须被''""引用起来
     #+ 阻止产生单字符的文件名.
-
+    
     exit 0 
 
 > 管道中的每个进程的stdout必须被下一个进程作为stdin来读入。否则，数据流会阻塞，并且管道将参生一些非预期的行为。
@@ -256,41 +256,41 @@ scriptname >>filename 把scriptname的输出追加到文件filename中. 如果fi
 
     #! /bin/bash
     # backgroud-loop.sh
-
+    
     for i in 1 2 3 4 5 6 7 8 9 10 # 第一个循环
     do 
       echo -n "$i"
     done &  # 在后台运行这个循环
             # 在第2个循环之后，将在某些时候执行。
-
+    
     echo    # 这个echo某些时候将不会显示
-
+    
     for i in 11 12 13 14 15 16 17 18 19 20  #第二个循环
     do
       echo "$i"
     done
     echo    # 这个echo某些时候将不会显示
     # ======================================================
-
+    
     # 期望的输出应该是:
     # 1 2 3 4 5 6 7 8 9 10
     # 11 12 13 14 15 16 17 18 19 20
-
+    
     # 然而实际的结果有可能是:
     # 11 12 13 14 15 16 17 18 19 20
     # 1 2 3 4 5 6 7 8 9 10 bozo $
     # (第2个'echo'没执行, 为什么?)
-
+    
     # 也可能是:
     # 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
     # (第1个'echo'没执行, 为什么?)
-
+    
     # 非常少见的执行结果, 也有可能是:
     # 11 12 13 1 2 3 4 5 6 7 8 9 10 14 15 16 17 18 19 20
     # 前台的循环先于后台的执行.
-
+    
     exit 0
-
+    
     # Nasimuddin Ansari 建议加一句 sleep 1
     #+ 在6行和14行的 echo -n "$i" 之后加这句.
     #+
@@ -313,7 +313,7 @@ scriptname >>filename 把scriptname的输出追加到文件filename中. 如果fi
     #！ /bin/bash
     #  在一个"tarball"中(经过tar和gzip处理过的文件)
     #+ 备份最后24小时当前目录下d所有修改的文件.
-
+    
     BACKUPFILE=backup-$(date +%m-%d-%Y)
     # 在备份文件中嵌入时间
     archive=${1:-$BACKUPFILE}
@@ -325,7 +325,7 @@ scriptname >>filename 把scriptname的输出追加到文件filename中. 如果fi
     #  Stephane Chazelas指出上边代码,
     #+ 如果在发现太多的文件的时候, 或者是如果文件
     #+ 名包括空格的时候, 将执行失败.
-
+    
     # Stephane Chazelas建议使用下边的两种代码之一:
     # -------------------------------------------------------------------
     #   find . -mtime -1 -type f -print0 | xargs -0 tar rvf "$archive.tar"
@@ -476,34 +476,34 @@ Ctl-V主要用于文本编辑.
     echo hello
     echo $hello
     echo ${hello}
-
+    
     echo "$hello"
     echo "${hello}"
-
+    
     echo 
-
+    
     hello="A B C   D"
     echo $hello
     echo "$hello"
-
+    
     echo '$hello'
     # 全引用的作用将会导致"$"被解释为单独的字符,而不是变量前缀.
-
+    
     hello=  # 设置为空值.
     echo "\$hello (null value) = $hello"
-
+    
     # 可以在同一行上设置多个变量,但是必须以空白进行分隔,慎用,降低可读性,并且不可移植.
     var1=21 var2=22 var3=$V3
     echo
     echo "var1=$var1 var2=$var2 var3=$var3"
-
+    
     echo; echo
     numbers="one two three"
     other_numbers="1 2 3"
     # 如果变量中存在空白,那么就必须加上引用.
     echo "numbers = $numbers"
     echo "other_numbers = $other_numbers"
-
+    
     echo "$mixed_bag"
     echo; echo
     echo "uninitialized_variable = $uninitialized_variable"
@@ -512,13 +512,13 @@ Ctl-V主要用于文本编辑.
                               #+ 其实和前边设置为空值的作用是一样的. 
     echo "uninitialized_variable = $uninitialized_variable"
                               # 还是一个空值.
-
+    
     uninitialized_variable=23       # 赋值.
     unset uninitialized_variable    # Unset这个变量.
     echo "uninitialized_variable = $uninitialized_variable"
                                     # 还是一个空值.
     echo
-
+    
     exit 0
 
 > 一个未初始化的变量将会是null值,就是未赋值(但不是代表值0)    
@@ -534,25 +534,25 @@ Ctl-V主要用于文本编辑.
     #! /bin/bash
     # '裸体变量'
     echo
-
+    
     # 变量什么时候是"裸体"的,当它被赋值的时候,而不是被引用的时候
     # 赋值
     a=879
     echo "the value of \"a\" is $a."
-
+    
     # 使用'let'赋值
     let a=16+5
     echo "the value of \"a\" is now $a."
-
+    
     echo
-
+    
     # 在for循环中(事实上,这是一种未赋值)
     echo -n "Values of \"a\" in the loop are: "
     for a in 7 8 9 11
     do 
     echo -n "$a "
     done
-
+    
     echo
     echo 
     # 使用read命令进行赋值
@@ -569,15 +569,15 @@ Ctl-V主要用于文本编辑.
     echo $a
     b=$a
     echo $b
-
+    
     a=`echo Hello`  # 把'echo'命令的结果传给变量'a'
     echo $a
-
+    
     a=`ls -l`
     echo $a # 如果没有引号的话将会删除ls结果中多余的tab和换行符.
     echo 
     echo "$a" # 如果加上引号的话, 那么就会保留ls结果中的空白符.
-
+    
     exit 0
 
 > 使用$(..)机制来进行变量赋值.
@@ -585,7 +585,7 @@ Ctl-V主要用于文本编辑.
 ##　4.3 Bash变量是不区分类型的.
 > 本质上,Bash变量都是字符串.但是依赖于具体的上下文,Bash也允许比较操作和整数操作.其中的关键因素就是,变量中的值是否只含有数字
 例子4-4 整形还是字符串
-      
+
     #! /bin/bash
     # init-or-string.sh : 整型还是字符串
     
@@ -624,7 +624,7 @@ Ctl-V主要用于文本编辑.
     echo 
     # 所以所bash中变量都是不区分类型的.
     exit
-    
+
 ## 4.4 特殊的变量类型
 - 局部变量
 > 这种变量只有在代码块或者函数中才可见
@@ -708,7 +708,7 @@ $0 就是脚本文件自身的名字,$1第一个参数,$9之后就必须用大�
      echo 
      
      exit 0
-     
+
 > {}标记法提供了一种提取从命令行传递到脚本的最后一个位置的参数的简单办法.但是这种方法还需要使用间接引用.
 
 # 引用
@@ -732,7 +732,7 @@ $0 就是脚本文件自身的名字,$1第一个参数,$9之后就必须用大�
     echo "$var"
     
     exit 0
-    
+
 > 单引号(' ')操作与双引号基本一样,但是不允许引用变量.
 
 ## 5.2  转义
@@ -792,7 +792,7 @@ $0 就是脚本文件自身的名字,$1第一个参数,$9之后就必须用大�
     
     echo; echo
     exit 0
- 
+
 - \\"    表示引号字面的意思
 - \\$    表示$本身字面的含义
 - \\\    表示反斜线字面的意思
@@ -810,6 +810,226 @@ $? 用于测试脚本中的命令结果的时候,往往显得特别有用.
 特定的退出状态码具有保留意思,所以用户不应该在脚本中指定它.
 
 # 7. 条件判断
+
+​	每个完整并且合理的程序语言都具有条件判断的功能,并且可以根据测试的结果做下一步的处理.Bash有test命令,各种中括号和圆括号操作和if/then结构.
+
+## 7.1 条件测试结构
+
+1. if/then结构用来判断命令列表的退出状态码是否为0, 如果成功的话,那么执行接下来的一个或者多个命令.
+
+2. 有一个专有命令[ (左中括号,特殊字符). 这个命令与test命令等价,并且出于效率上的考虑,这是一个内建命令.这个命令把它的参数作为比较表达式或者作为文件测试,并且根据比较的结果来返回一个退出状态码(0表示真,1表示假)
+
+3. 在版本2.02的Bash中,引入了 [[ ... ]] 扩展测试命令,因为这种表现形式可能对某些语言的程序员来说更容易熟悉一些.主要[[是一个关键字,并不是一个命令.
+
+   > Bash把[[ $a -lt $b]] 看作一个单独的元素,并且返回一个退出状态码.  
+   >
+   > (( ... )) 和let ... 结构也能够返回退出状态码,当它们所测试的算术表达式的结果为非零的时候,将返回退出状态码0.
+
+4. if 命令能够测试任何命令,并且不仅仅是中括号中的条件
+
+5. 一个if/then结构可以包含嵌套的比较操作和条件判断操作.
+
+例子7-1 什么是真 
+
+```bash
+#! /bin/bash
+# 小技巧
+# 如果你不能确定一个特定的条件该如何判断,那么就使用if-test结构
+echo
+echo "Testing \"0\""
+if [ 0 ]
+then
+	echo "0 is true."
+else
+	echo "0 is false."
+fi	# 0为真
+
+echo "Testing \"1\""
+if [ 1 ]
+then
+	echo "1 is true."
+else
+	echo "1 is false."
+fi	# 1为真
+echo
+echo "Testing \"-1\""
+if [ -1 ]
+then
+	echo "-1 is true."
+else
+	echo "-1 is false."
+fi	# -1为真
+echo
+echo "Testing \"NULL\""
+if [  ]
+then
+	echo "NULL is true."
+else
+	echo "NULL is false."
+fi	# NULL为假
+echo
+
+echo "Testing \"$xyz\""
+if [ $xyz ]		# 判断$xyz是否null,这是一个未初始化的变量
+then
+	echo "Uninitialized variable is true."
+else
+	echo "Uninitialized variable is flase."
+fi		# 未定义的初始化为假
+echo
+
+echo "Testing \"-n $xyz\""
+if [ -n $xyz ]		# 更加正规的条件检查
+then
+	echo "Uninitialized variable is true."
+else
+	echo "Uninitialized variable is flase."
+fi		# 未定义的初始化为假
+echo
+
+xyz= 	# 初始化了,但是赋null值
+echo "Testing \"-n $xyz\""
+if [ -n $xyz ]		
+then
+	echo "Null variable is true."
+else
+	echo "Null variable is flase."
+fi		# null变量为假
+echo
+
+# 什么时候"false"为真?
+
+echo "Testing \"false\""
+if [ "false" ] # 看起来"false"只不过是一个字符串而已.
+then
+echo "\"false\" is true." #+ 并且条件判断的结果为真.
+else
+echo "\"false\" is false."
+fi # "false" 为真.
+
+echo
+
+echo "Testing \"\$false\"" # 再来一个, 未初始化的变量.
+if [ "$false" ]
+then
+echo "\"\$false\" is true."
+else
+echo "\"\$false\" is false."
+fi # "$false" 为假.
+# 现在, 我们得到了预期的结果.
+
+# 如果我们测试以下为初始化的变量"$true"会发生什么呢?
+
+echo
+
+exit 0
+
+```
+
+> 如果if和then在条件判断的同一行上的话,必须使用分号来结束if表达式.if和then都是关键字.关键字或者命令如果作为表达式的开头,并且如果想在同一行上再写一个新的表达式的话,那么必须使用分号来结束上一句表达式.  
+>
+> elif是else if的缩写形式.作用是在外部的判断结构中在嵌入一个内部的if/then结构.  
+>
+> if test condition-true结构与if [ condition-true ]完全相同.左中括号 [ ,是调用test命令的标识,而关闭条件判断用的右中括号, ] , 在if/then机构中并不是严格必须的,但是在新的Bash的新版本中必须要求使用.  
+>
+> test命令在Bash中是一个内建命令,用来测试文件类型,或者用来比较字符串.
+
+例子7-2 test, /usr/bin/test, [  ] 和 /usr/bin/[ 都是等价命令
+
+```bash
+#! /bin/bash
+echo
+if test -z "$1"
+then 
+	echo "No command-line arguments."
+else
+	echo "First command-line arguments $1."
+fi
+
+echo 
+if /usr/bin/test -z "$1"	# 与内建命令test结果相同
+then 
+	echo "No command-line arguments."
+else
+	echo "First command-line arguments $1."
+fi
+
+if [ -z "$1" ]
+then 
+	echo "No command-line arguments."
+else
+	echo "First command-line arguments $1."
+fi
+
+if /usr/bin/[ -z "$1" ]
+then 
+	echo "No command-line arguments."
+else
+	echo "First command-line arguments $1."
+fi
+echo
+exit 0
+	
+```
+
+> [[  ]]结构比[  ]结构更加通用.这是一个扩展的test命令,是从ksh88中引进.  
+>
+> 在[[和]]之间所有的字符串都不会发生文件名扩展或者单词分割,但是会发生参数扩展和命令替换. 
+>
+> [[ ... ]]条件判断结构,而不是[ ... ],能够防止脚本的许多逻辑错误.比如 &&, ||, < , > 操作符能够正常存在于[[]]条件判断机构中,但是如果出现在[ ]结构中的话,会报错.
+>
+> 在if后面也不一定非得是test命令或者是用于条件判断的中括号结构 ([  ] , [[ ]]), "if COMMAND"结构将会返回COMMAND的退出状态码.于此相似,在中括号的条件判断也不一定非的要if不可,也可以使用列表结构.  
+>
+> (( ))结构扩展并计算一个算术表达式的值.如果表达式的结果为0, 那么返回的退出状态码为1, 或者
+> 是"假". 而一个非零值的表达式所返回的退出状态码将为0, 或者是"true". 这种情况和先前所讨论
+> 的test命令和[ ]结构的行为正好相反. 
+
+例子7-3 算术测试需要使用 (( ))
+
+```bash
+#!/bin/bash
+# 算术测试.
+# (( ... ))结构可以用来计算并测试算术表达式的结果.
+# 退出状态将会与[ ... ]结构完全相反!
+(( 0 ))
+echo "Exit status of \"(( 0 ))\" is $?." # 1
+(( 1 ))
+echo "Exit status of \"(( 1 ))\" is $?." # 0
+
+(( 5 > 4 )) # 真
+echo "Exit status of \"(( 5 > 4 ))\" is $?." # 0
+
+(( 5 > 9 )) # 假
+echo "Exit status of \"(( 5 > 9 ))\" is $?." # 1
+
+(( 5 - 5 )) # 0
+echo "Exit status of \"(( 5 - 5 ))\" is $?." # 1
+
+(( 5 / 4 )) # 除法也可以.
+echo "Exit status of \"(( 5 / 4 ))\" is $?." # 0
+
+(( 1 / 2 )) # 除法的计算结果 < 1.
+echo "Exit status of \"(( 1 / 2 ))\" is $?." # 截取之后的结果为 0.
+# 1
+
+(( 1 / 0 )) 2>/dev/null # 除数为0, 非法计算.
+# ^^^^^^^^^^^
+echo "Exit status of \"(( 1 / 0 ))\" is $?." # 1
+
+# "2>/dev/null"起了什么作用?
+# 如果这句被删除会怎样?
+# 尝试删除这句, 然后在运行这个脚本.
+
+exit 
+```
+
+## 7.2 文件测试符
+
+
+
+
+
+
 
 
 
