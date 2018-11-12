@@ -1025,11 +1025,503 @@ exit
 
 ## 7.2 文件测试符
 
+如果一下条件成立将会返回真.
+
+-e	文件存在
+
+-a	文件存在,效果与-e相同,已弃用
+
+-f	表示这个文件是普通文件
+
+-s	文件大小不为零
+
+-d	表示这是一个目录
+
+-b	表示这是一个块设备(软盘,光驱等等)
+
+-c	表示这是一个字符设备(键盘,modem,声卡等等)
+
+-p	表示文件是一个管道
+
+-h	这是一个符号链接
+
+-L	这是一个符号链接
+
+-S	表示这是一个socket
+
+-t	文件描述符被关联到一个终端设备上.
+
+-r	文件是否具有可读权限
+
+-w	文件是否具有可写权限
+
+-x	文件是否具有可执行权限
+
+-g	set-group-id(sgid)标记被设置到文件或目录上
+
+-u	set-user-id(suid)标记被设置到文件上,对于设置了suid标志的文件,在它的权限列中将会以s表示.
+
+-k	设置粘贴位
+
+> 对于"粘贴位"的一般了解,save-text-mode标志一个文件权限的特殊类型.如果文件设置了这个标志,那么这个文件将会被保存到缓存中,这样可以提高访问速度.粘贴位如果设置在目录中,那么将限制写权限.对于设置了粘贴位的文件或目录,在它们的权限标记列中将会显示t
+
+-O	判断是否是文件拥有者
+
+-G	文件的group-id是否与你相同
+
+-N	从文件上一次被读取到现在为止,文件是否被修改过
+
+f1 -nt f2	文件f1比文件f2新
+
+f1 -ot f2 文件f1比文件f2旧
+
+f1 -et f2 	文件f1和文件f2是相同文件的硬链接
+
+!	"非"--反转上边所有测试的结果.
+
+## 7.3 其他比较操作符
+
+- 整数比较
+
+-eq	等于
+
+-ne	不等于
+
+-gt	大于
+
+-ge	大于等于
+
+-lt	小于
+
+-le	小于等于 if [ "$a" -le "$b" ] 
+
+<	小于(在双括号中使用)	(("$a" < "$b")) 
+
+<=	小于等于(在双括号中使用)
+
+\>	大于(在双括号中使用)
+
+\>=	大于等于(在双括号中使用)
+
+- 字符串比较
+
+=	等于 if [ "$a" = "$b" ] 
+
+==	等于与=等价,==比较操作符在双括号对和单中括号对中行为是不同的
+
+!=	不等于
+
+<	小于,按照ASCII字符进行排序,注意"<"使用在[ ]结构中的时候需要被转义 .
+
+\>	大于,按照ASCII字符进行排序,注意">"使用在[ ]结构中的时候需要被转义 .
+
+-z	字符为null
+
+-n	字符串不为null,当-n使用中括号进行条件测试的时候,必须要把字符串用双引号引用起来.
+
+例子7-5 算术比较和字符串比较
+
+ 
+
+```bash
+#! /bin/bash
+a=4
+b=5
+echo
+if [ "$a" -ne "$b" ]
+then
+	echo "$a is not equal to $b"
+	echo "(arithmetic cpmparison)"
+fi
+
+echo
+if [ "$a" != "$b" ]
+then
+	echo "$a is not equal to $b"
+	echo "(String comparison)"
+fi
+# 在这个特定例子中,"-ne" "!="都可以
+echo
+exit 0
+```
+
+例子7-6 检查字符串是否null
+
+```bash
+#! /bin/bash
+# str-test.sh: 检查null字符串和未引用的字符.
+# 如果字符串并没有被初始化, 那么它里面的值未定义.
+# 这种状态被称为"null" (注意这与零值不同).
+if [ -n $string1 ]
+then
+	echo "String \"string1\" is not null"
+else
+	echo "String \"string1\" is null"
+fi
+echo
+if [ -n "$string1" ]
+then
+	echo "String \"string1\" is not null"
+else
+	echo "String \"string1\" is null"
+fi
+echo
+if [ $string1 ]
+then
+	echo "String \"string1\" is not null"
+else
+	echo "String \"string1\" is null"
+fi
+echo
+
+string1=initialized
+if [ $string1 ]
+then
+	echo "String \"string1\" is not null"
+else
+	echo "String \"string1\" is null"
+fi
+echo
+string1="a = b"
+if [ $string1 ]
+then
+	echo "String \"string1\" is not null"
+else
+	echo "String \"string1\" is null"
+fi
+echo
+exit 0
+```
+
+- 逻辑比较
+
+-a	逻辑与 exp1 -a exp2 如果表达式exp1和exp2都为真的话, 那么结果为真 
+
+-o	逻辑或exp1 -a exp2 如果表达式exp1和exp2至少一个为真的话, 那么结果为真 
+
+## 7.4 嵌套的if/then条件测试
+
+通过if/then结构来使用嵌套的条件测试.最终结果和上面使用&&混合比较操作符结果是相同的.
 
 
 
+# 8.操作符与相关主题
+
+## 8.1 操作符
+
+- 赋值
+
+变量赋值: 初始化或者修改变量的值.
+
+=	通用赋值操作符,可用于算术和字符串赋值.
+
+- 算术操作符
+
+\+     加法计算
+
+\-	减法计算
+
+\*	乘法计算
+
+/	除法计算
+
+**	幂运算
+
+%	模运算,或者是求余运算
+
+例子8-1 最大公约数
+
+```bash
+#!/bin/bash
+# gcd.sh: 最大公约数
+# 使用Euclid的算法
+
+# 两个整数的"最大公约数" (gcd),
+#+ 就是两个整数所能够同时整除的最大的数.
+
+# Euclid算法采用连续除法.
+# 在每一次循环中,
+#+ 被除数 <--- 除数
+#+ 除数 <--- 余数
+#+ 直到 余数 = 0.
+#+ 在最后一次循环中, gcd = 被除数.
+#
+# 关于Euclid算法的更精彩的讨论, 可以到
+#+ Jim Loy的站点, http://www.jimloy.com/number/euclids.htm.
 
 
+# ------------------------------------------------------
+# 参数检查
+ARGS=2
+E_BADARGS=65
+
+if [ $# -ne "$ARGS" ]
+then
+echo "Usage: `basename $0` first-number second-number"
+exit $E_BADARGS
+fi
+# ------------------------------------------------------
 
 
+gcd ()
+{
+
+dividend=$1 # 随意赋值.
+divisor=$2 #+ 在这里, 哪个值给的大都没关系.
+# 为什么没关系?
+
+remainder=1 # 如果在循环中使用了未初始化的变量,
+#+ 那么在第一次循环中,
+#+ 它将会产生一个错误消息.
+
+until [ "$remainder" -eq 0 ]
+do
+let "remainder = $dividend % $divisor"
+dividend=$divisor # 现在使用两个最小的数来重复.
+divisor=$remainder
+done # Euclid的算法
+
+} # Last $dividend is the gcd.
+
+
+gcd $1 $2
+
+echo; echo "GCD of $1 and $2 = $dividend"; echo
+
+
+# Exercise :
+# --------
+# 检查传递进来的命令行参数来确保它们都是整数.
+#+ 如果不是整数, 那就给出一个适当的错误消息并退出脚本.
+
+exit 0
+```
+
++=	加-等于(把变量的值增加一个常量然后再把结果赋给变量) 
+
+-= 	减-等于(把变量的值减去一个常量然后再把结果赋给变量) 
+
+*=	乘-等于(把变量的值乘以一个常量然后再把结果赋给变量) 
+
+/= 	除-等于(把变量的值除以一个常量然后再把结果赋给变量) 
+
+%=	取模-等于(先对变量进行模运算, 即除以一个常量取模 ,然后再把结果赋给变量) 
+
+例子 8-2 使用算术操作符
+
+```bash
+#!/bin/bash
+# 使用10种不同的方法计数到11.
+
+n=1; echo -n "$n "
+
+let "n = $n + 1" # let "n = n + 1" 也可以.
+echo -n "$n "
+
+
+: $((n = $n + 1))
+# ":" 是必需的, 因为如果没有":"的话,
+#+ Bash将会尝试把"$((n = $n + 1))"解释为一个命令.
+echo -n "$n "
+
+(( n = n + 1 ))
+# 上边这句是一种更简单方法.
+# 感谢, David Lombard, 指出这点.
+echo -n "$n "
+
+n=$(($n + 1))
+echo -n "$n "
+
+: $[ n = $n + 1 ]
+# ":" 是必需的, 因为如果没有":"的话,
+#+ Bash将会尝试把"$[ n = $n + 1 ]"解释为一个命令.
+# 即使"n"被初始化为字符串, 这句也能够正常运行.
+echo -n "$n "
+
+n=$[ $n + 1 ]
+# 即使"n"被初始化为字符串, 这句也能够正常运行.
+#* 应该尽量避免使用这种类型的结构, 因为它已经被废弃了, 而且不具可移植性.
+# 感谢, Stephane Chazelas.
+echo -n "$n "
+
+# 现在来一个C风格的增量操作.
+# 感谢, Frank Wang, 指出这点.
+
+let "n++" # let "++n" 也可以.
+echo -n "$n "
+
+(( n++ )) # (( ++n ) 也可以.
+echo -n "$n "
+
+: $(( n++ )) # : $(( ++n )) 也可以.
+echo -n "$n "
+
+: $[ n++ ] # : $[ ++n ]] 也可以.
+echo -n "$n "
+
+echo
+
+exit 0
+```
+
+- 位操作符
+
+>​	位操作符在shell脚本中很少被使用, 它们最主要的用途就是操作和测试从端口或
+>者sockets中读取的值. 
+
+<<	左移一位(每次左移都相当于乘以2)
+
+<<=	左移-赋值
+
+\>>	右移一位(每次左移都相当于除以2)
+
+\>>=	右移-赋值
+
+&	按位与
+
+&=	按位与-赋值
+
+|	按位或
+
+|=	按位或-赋值
+
+~	按照反
+
+!	按位非
+
+^	按位异或
+
+^=	按位异或-赋值
+
+&&	与(逻辑)
+
+||	或(逻辑)
+
+例子8-3 使用&&和||进行混合条件测试
+
+```bash
+#!	/bin/bash
+a=24
+b=47
+if [ "$a" -eq 24 ] && [ "$b" -eq 47 ]
+then
+	echo "Test #1 succeeds."
+else
+	echo "Test #1 fails."
+fi
+# ERROR: if [ "$a" -eq 24 && "$b" -eq 47 ]
+#+ 尝试运行' [ "$a" -eq 24 '
+#+ 因为没找到匹配的']'所以失败了.
+#
+# 注意: if [[ $a -eq 24 && $b -eq 24 ]] 也能正常运行.
+# 双中括号的if-test结构要比
+#+ 单中括号的if-test结构更加灵活.
+# (在第17行"&&"与第6行的"&&"具有不同的含义.)
+if [ "$a" -eq 24 ] || [ "$b" -eq 47 ]
+then
+	echo "Test #1 succeeds."
+else
+	echo "Test #1 fails."
+fi
+# -a和-o选项提供了
+#+ 一种可选的混合条件测试的方法.
+
+if [ "$a" -eq 24 -a "$b" -eq 47 ]
+then
+echo "Test #3 succeeds."
+else
+echo "Test #3 fails."
+fi
+
+
+if [ "$a" -eq 98 -o "$b" -eq 47 ]
+then
+echo "Test #4 succeeds."
+else
+echo "Test #4 fails."
+fi
+
+
+a=rhino
+b=crocodile
+if [ "$a" = rhino ] && [ "$b" = crocodile ]
+then
+echo "Test #5 succeeds."
+else
+echo "Test #5 fails."
+fi
+
+exit 0
+```
+
+&&和||操作符也可以用在算术上下文中. 
+
+- 混杂的操作符
+
+,      逗号操作符
+
+> ​	逗号操作符可以连接两个或多个算术运算.所有的操作都会被运行(可能会有副作用),但是指挥返回最后操作的结果.
+
+## 8.2 数字常量
+
+​	shell脚本在默认情况都是把数字作为10进制数来处理.除非这个数字采用了特殊的标记或者前缀.如果数字以0开头的话那么是8进制数如果数字以0x开头的话那么就是16进制数. 如果数字中间嵌入了#的话, 那么就被认为是BASE#NUMBER形式的标记法(有范围和符号限制). .
+
+例子8-4 数字常量表示法
+
+```bash
+#!/bin/bash
+# numbers.sh: 几种不同数制的数字表示法.
+
+# 10进制: 默认情况
+let "dec = 32"
+echo "decimal number = $dec" # 32
+# 这没什么特别的.
+
+
+# 8进制: 以'0'(零)开头
+let "oct = 032"
+echo "octal number = $oct" # 26
+# 表达式结果是用10进制表示的.
+# ---------------------------
+
+# 16进制: 以'0x'或者'0X'开头的数字
+let "hex = 0x32"
+echo "hexadecimal number = $hex" # 50
+# 表达式结果是用10进制表示的.
+
+# 其他进制: BASE#NUMBER
+# BASE的范围在2到64之间.
+# NUMBER的值必须使用BASE范围内的符号来表示, 具体看下边的示例.
+
+
+let "bin = 2#111100111001101"
+echo "binary number = $bin" # 31181
+
+let "b32 = 32#77"
+echo "base-32 number = $b32" # 231
+
+let "b64 = 64#@_"
+ echo "base-64 number = $b64" # 4031
+# 这个表示法只能工作于受限的ASCII字符范围(2 - 64).
+# 10个数字 + 26个小写字母 + 26个大写字符 + @ + _
+
+
+echo
+
+echo $((36#zz)) $((2#10101010)) $((16#AF16)) $((53#1aA))
+# 1295 170 44822 3375
+
+
+# 重要的注意事项:
+# ---------------
+# 使用一个超出给定进制的数字的话,
+#+ 将会引起一个错误.
+
+let "bad_oct = 081"
+# (部分的) 错误消息输出:
+# bad_oct = 081: value too great for base (error token is "081")
+# Octal numbers use only digits in the range 0 - 7.
+
+exit 0 # 感谢, Rich Bartell 和 Stephane Chazelas的指正
+```
 
